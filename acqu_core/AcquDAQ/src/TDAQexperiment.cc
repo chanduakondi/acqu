@@ -42,6 +42,7 @@
 //--Rev 	K Livingston..7th Feb 2013  Support for writing EPICS buffers
 //--Rev 	JRM Annand    2nd Mar 2013  EPICS read in conditional block
 //--Update  A Neiser...   6th June 2013  Make char_t* const
+//--Update  A Neiser...   6th June 2013 Add TRB3 modules
 //--Update	JRM Annand    6th Jul 2013  Add V965 QDC
 //
 //--Description
@@ -61,6 +62,7 @@
 //
 #include "TDAQ_V2718.h"
 #include "TDAQ_KPhI686.h"
+#include "TDAQ_TRB3.h"
 #include "TVME_CBD8210.h"
 #include "TVME_V792.h"
 #include "TVME_V775.h"
@@ -87,6 +89,7 @@
 #include "TVME_SIS3820.h"
 #include "TEPICSmodule.h"
 #include "TVME_V965.h"
+#include "TTRB3module.h"
 
 ClassImp(TDAQexperiment)
 
@@ -364,6 +367,10 @@ void TDAQexperiment::AddModule( Char_t* line )
     // KPH, Pentium M based, SBC VMEbus controller (primary controller)
     mod = new TDAQ_KPhI686( name, file, fLogStream, line);
     break;
+  case ETRB3_Ctrl:
+    // TRB3 controller (primary controller)
+    mod = new TDAQ_TRB3( name, file, fLogStream, line);
+    break;
   case EVMEbus:
     // Generic VMEbus module
     mod = new TVMEmodule( name, file, fLogStream, line);
@@ -482,6 +489,9 @@ void TDAQexperiment::AddModule( Char_t* line )
     else{
       mod = new TEPICSmodule( name, file, fLogStream, line);
     }
+    break;
+  case ETRB3_Endpoint:
+    mod = new TTRB3module(name, file, fLogStream, line);
     break;
     
   default:
