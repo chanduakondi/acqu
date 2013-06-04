@@ -17,6 +17,7 @@ using std::make_pair;
 #include "TA2Math.h"
 #include "TA2CentralTrack.h"
 #include "HitCluster_t.h"
+#include "TA2Particle.h"
 
 class TA2CalArray;
 class TA2TrackLine;
@@ -197,6 +198,10 @@ public:
 public:
   Bool_t fDisplay;
   void InitGeometry();
+
+	TA2Particle* GetParticles() { return fParticleInfo; }
+	TA2Particle GetParticles(Int_t index){ return fParticleInfo[index]; }
+
 private:
   TCanvas *c, *c2, *c3;
   TH2F *h, *h2, *h3;
