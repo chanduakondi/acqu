@@ -71,5 +71,7 @@
 #pragma link C++ class TA2CentralTrack++;
 #pragma link C++ class TA2TrackLine++;
 #pragma link C++ class TA2MwpcIntersection++;
+#pragma link C++ class TA2GeomCalibPhysics+;
+#pragma link C++ class TA2CylMwpcLayer+;
 
 #endif
