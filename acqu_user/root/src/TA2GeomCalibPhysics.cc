@@ -3,7 +3,7 @@
 using namespace std;
 
 // AcquROOT includes
-#include "TA2MyUserAnalysis.h"
+#include "TA2UserAnalysis.h"
 #include "TA2CentralApparatus.h"
 #include "TA2CalArray.h"
 #include "TA2PlasticPID.h"

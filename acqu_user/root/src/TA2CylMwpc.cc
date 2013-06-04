@@ -9,7 +9,7 @@
 #include "TH2F.h"
 // AcquRoot
 #include "TA2CylMwpc.h"
-#include "TA2MyUserAnalysis.h"
+#include "TA2UserAnalysis.h"
   
 enum {
   ENWCLayer = 200, ENWCChamber, ENWCLayersInChamber, EWCChamberParm,
