@@ -4,6 +4,8 @@
 
 // AcquROOT includes
 #include "TA2Physics.h"
+#include "TA2CalArray.h"
+#include "TA2PlasticPID.h"
 
 // AcquROOT classes
 class TA2CentralApparatus;
