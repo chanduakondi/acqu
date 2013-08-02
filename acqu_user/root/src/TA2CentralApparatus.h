@@ -209,7 +209,7 @@ private:
   Double_t xCB[5][32], yCB[5][32];
   Double_t zCB_yz[5][13], yCB_yz[5][13], y2CB_yz[5][13];
   Double_t zCB_xz[5][13], xCB_xz[5][13], x2CB_xz[5][13];
-  Int_t GetNparticle(){ return fNparticle; }
+  
 
 //
 public:
@@ -223,6 +223,8 @@ public:
   virtual void		  Cleanup();			// reset event
   virtual void		  DeleteArrays();		// flush local new store
   virtual void		  MarkEndBuffers();		// Mark EndBuffer for the output arrays
+  
+  Int_t GetNparticle(){ return fNparticle; } // must be public, but actually base class has such a function
   
   ClassDef(TA2CentralApparatus,1) // Central detector tracks reconstruction (PID+MWPC+CB)
 };
