@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# This script manages the AcquDAQ start
+
+# write everything to the syslog as well as to STDERR
+LOGGER="logger -s -t AcquControl" 
+
+# Make sure only root can run our script
+if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root (VME access needs it)" | ${LOGGER}
+    exit 1
+fi
+
+function error_exit {
+    echo "Error: $1" | ${LOGGER}
+    exit 1
+}
+
+function start() {
+    ACQU_USER=a2cb 
+    ACQU_WORKDIR=/home/${ACQU_USER}/acqu
+    ACQU_BIN=/acqu/build/bin
+    DATA_DIR=/acqu/acqu_core/AcquDAQ/data/$(hostname -s)
+    TIMEOUT=10 # how many seconds maximum for AcquDAQ to start
+
+    # ensure there is a working directory
+    mkdir -p ${ACQU_WORKDIR}
+    cd ${ACQU_WORKDIR} || error_exit "Cannot change to ${ACQU_WORKDIR}"
+    echo "Changed to ${ACQU_WORKDIR}..." | ${LOGGER}
+
+    # ensure there is a correct symlink
+    echo "Linking data to ${DATA_DIR}..." | ${LOGGER}
+    ln -Tfs ${DATA_DIR} data || error_exit "Cannot create data symlink"
+    
+    echo "Starting AcquDAQ in background, logging to syslog..." | ${LOGGER}
+    # the next command does not finish until the grep pattern matches
+    timeout ${TIMEOUT} grep -m 1 -q 'AcquDAQ: <Waiting to connect to data receiver>' \
+	<(tail -n 0 -f /var/log/syslog) &
+    GREP_PID=$!
+    # when AcquDAQ is started, it should output that it's waiting
+    nohup sh -c "${ACQU_BIN}/AcquDAQ $@ 2>&1 | logger -t AcquDAQ" 2>/dev/null >/dev/null < /dev/null &
+    # now wait until the background process is done, this is the case if AcquDAQ outputs it's waiting...
+    wait ${GREP_PID} || error_exit "AcquDAQ did not start listening after ${TIMEOUT} s"
+    echo "AcquDAQ started, awaiting data server connection" | ${LOGGER}
+}
+
+function stop() {
+    # kill all previous instances, ignore errors silently
+    # and wait until the processes are killed
+    echo "Killing already running AcquDAQ processes..." | ${LOGGER}
+    killall -w -q AcquDAQ
+}
+
+# what to do?
+case $1 in
+    start)
+        start "${@:2}"
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start "${@:2}"
+        ;;
+    *)
+        echo "Usage: $0 (start|stop|restart) [optional arguments]" | ${LOGGER}
+        exit 255
+        ;;
+esac
+
